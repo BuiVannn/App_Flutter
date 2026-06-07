@@ -3,6 +3,10 @@ import 'package:opus_dart/opus_dart.dart';
 import 'package:opus_flutter/opus_flutter.dart' as opus_flutter;
 import 'package:ptalk_core/ptalk_core.dart';
 
+/// `initOpus()` của opus_dart là toàn cục — chỉ được gọi MỘT lần cho cả vòng đời
+/// app. Gọi lần 2 sẽ ném lỗi, nên ta khoá lại bằng cờ này.
+bool _opusInitialized = false;
+
 /// Encode/decode 1 frame 20ms PCM16 mono 48kHz ⇄ Opus.
 class OpusTranscoder {
   late final SimpleOpusEncoder _encoder;
@@ -10,7 +14,10 @@ class OpusTranscoder {
   bool _ready = false;
 
   Future<void> init() async {
-    initOpus(await opus_flutter.load());
+    if (!_opusInitialized) {
+      initOpus(await opus_flutter.load());
+      _opusInitialized = true;
+    }
     _encoder = SimpleOpusEncoder(
       sampleRate: OpusAudioFormat.sampleRate,
       channels: OpusAudioFormat.channelCount,

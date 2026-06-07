@@ -92,7 +92,9 @@ class SpikeVoiceClient {
   Future<void> stop() async {
     await _micSub?.cancel();
     await _wsSub?.cancel();
-    await _mic.stop();
+    // dispose() (không chỉ stop()) để giải phóng hẳn AudioRecorder/AVAudioSession,
+    // nếu không lần bật thứ 2 sẽ không thu được mic trên iOS.
+    await _mic.dispose();
     await _ch?.sink.close();
     await _player.release();
     _transcoder.dispose();
