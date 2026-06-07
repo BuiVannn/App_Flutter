@@ -1,0 +1,7 @@
+name: ptalk_core
+publish_to: none
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+dependencies: {}
+dev_dependencies:
+  test: ^1.25.0

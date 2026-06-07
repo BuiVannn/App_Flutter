@@ -1,0 +1,15 @@
+name: ptalk_workspace
+packages:
+  - packages/**
+  - PTalk_Signature
+  - KidMentor
+  - P_Connect
+scripts:
+  analyze:
+    run: dart analyze .
+    exec:
+      concurrency: 1
+  test:
+    run: flutter test
+    exec:
+      concurrency: 1
