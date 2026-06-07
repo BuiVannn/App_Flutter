@@ -59,7 +59,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       cacheWidth: 500),
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'CHÀO MỪNG\nBẠN TRỞ LẠI',
                   textAlign: TextAlign.center,
                   style: TextStyle(
@@ -67,7 +67,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     height: 1.1,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1,
-                    color: AppColors.textPrimary,
+                    color: AppColors.textOn(
+                        Theme.of(context).brightness == Brightness.dark),
                   ),
                 ),
                 const SizedBox(height: 8),

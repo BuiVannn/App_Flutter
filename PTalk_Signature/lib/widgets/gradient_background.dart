@@ -1,16 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:ptalk_core/ptalk_core.dart';
 
-/// Nền gradient xanh chung cho Splash/Login/ModeSelect.
+/// Nền gradient theo chế độ (Kid xanh / Elder cam) và theme sáng/tối.
 class GradientBackground extends StatelessWidget {
   const GradientBackground({super.key, required this.child});
   final Widget child;
 
   @override
-  Widget build(BuildContext context) => DecoratedBox(
-        decoration: const BoxDecoration(gradient: AppColors.screenGradient),
-        child: child,
-      );
+  Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final elder = ServerConfig.activeMode == AppMode.elderCare;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: AppColors.screenGradientFor(elder: elder, dark: dark),
+      ),
+      child: child,
+    );
+  }
 }
 
 /// Thanh header "kính mờ" với 2 logo hai bên + nhãn ở giữa.
@@ -19,56 +25,68 @@ class GlassHeader extends StatelessWidget {
     super.key,
     required this.centerLabel,
     this.centerSubLabel,
+    this.leading,
     this.trailing,
   });
 
   final String centerLabel;
   final String? centerSubLabel;
+  final Widget? leading;
   final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = AppColors.textOn(dark);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      height: 64,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.55),
+        color: (dark ? Colors.white : Colors.white).withValues(alpha: dark ? 0.10 : 0.55),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
+        border: Border.all(
+            color: Colors.white.withValues(alpha: dark ? 0.18 : 0.6)),
       ),
       child: Row(
         children: [
-          Image.asset('assets/images/logo_ptit.png', height: 36),
-          const SizedBox(width: 12),
-          Container(width: 1, height: 32, color: AppColors.dividerLine),
+          if (leading != null)
+            leading!
+          else
+            Image.asset('assets/images/logo_ptit.png', height: 36),
+          const SizedBox(width: 10),
+          Container(width: 1, height: 30, color: AppColors.dividerLine),
           Expanded(
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   centerLabel,
                   textAlign: TextAlign.center,
-                  style: const TextStyle(
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
                     fontWeight: FontWeight.w700,
-                    fontSize: 18,
-                    letterSpacing: 1.5,
-                    color: AppColors.textPrimary,
+                    fontSize: 16,
+                    letterSpacing: 1.2,
+                    color: textColor,
                   ),
                 ),
                 if (centerSubLabel != null)
                   Text(
                     centerSubLabel!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontSize: 10,
-                      color: AppColors.textSecondary,
+                      color: textColor.withValues(alpha: 0.7),
                     ),
                   ),
               ],
             ),
           ),
-          Container(width: 1, height: 32, color: AppColors.dividerLine),
-          const SizedBox(width: 12),
-          Image.asset('assets/images/logo_cts_main.png', height: 40),
-          if (trailing != null) ...[const SizedBox(width: 4), trailing!],
+          Container(width: 1, height: 30, color: AppColors.dividerLine),
+          const SizedBox(width: 10),
+          Image.asset('assets/images/logo_cts_main.png', height: 38),
+          ?trailing,
         ],
       ),
     );

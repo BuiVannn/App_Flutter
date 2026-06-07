@@ -67,7 +67,9 @@ class _CharacterViewState extends State<CharacterView>
       child: Image.asset(_asset,
           width: widget.size,
           height: widget.size,
-          cacheWidth: (widget.size * 3).round()),
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.medium,
+          cacheWidth: (widget.size * 2).round()),
     );
   }
 }

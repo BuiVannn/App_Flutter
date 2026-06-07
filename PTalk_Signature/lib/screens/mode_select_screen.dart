@@ -34,14 +34,15 @@ class ModeSelectScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'CHỌN CHẾ ĐỘ',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 1,
-                    color: AppColors.textPrimary,
+                    color: AppColors.textOn(
+                        Theme.of(context).brightness == Brightness.dark),
                   ),
                 ),
                 const SizedBox(height: 6),

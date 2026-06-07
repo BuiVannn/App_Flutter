@@ -7,7 +7,9 @@ import 'package:ptalk_core/ptalk_core.dart';
 /// Phát ra các frame PCM16 mono 48kHz, mỗi frame đúng 1920 byte (20ms).
 class MicCapture {
   final _recorder = AudioRecorder();
-  final _frameController = StreamController<Uint8List>();
+  // broadcast: cho phép start/stop nhiều lần trong cùng phiên (nếu không sẽ
+  // ném "Stream has already been listened to" ở lần nói thứ 2).
+  final _frameController = StreamController<Uint8List>.broadcast();
   StreamSubscription<Uint8List>? _sub;
   final _buffer = BytesBuilder();
 
