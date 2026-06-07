@@ -54,6 +54,11 @@ dependencies:
   # G2 — auth/SSO + entry screens
   url_launcher: ^6.3.0
 
+  # G4/G5 — medicine scanner + settings/subscription
+  camera: ^0.11.0+2
+  http: ^1.2.0
+  shared_preferences: ^2.3.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

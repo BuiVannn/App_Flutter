@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:ptalk_core/ptalk_core.dart';
-import '../core/providers.dart';
 import '../voice/voice_controller.dart';
 import '../voice/voice_models.dart';
 import '../widgets/gradient_background.dart';
@@ -33,13 +32,10 @@ class MainVoiceScreen extends ConsumerWidget {
                   child: GlassHeader(
                     centerLabel: mode.brandTitle,
                     trailing: IconButton(
-                      icon: const Icon(Icons.logout,
+                      icon: const Icon(Icons.settings,
                           color: AppColors.textSecondary),
-                      tooltip: 'Đăng xuất',
-                      onPressed: () async {
-                        await ref.read(tokenStoreProvider).clear();
-                        if (context.mounted) context.go('/login');
-                      },
+                      tooltip: 'Cài đặt',
+                      onPressed: () => context.push('/settings'),
                     ),
                   ),
                 ),
@@ -54,6 +50,19 @@ class MainVoiceScreen extends ConsumerWidget {
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         fontSize: 14, color: AppColors.textSecondary)),
+                if (mode == AppMode.elderCare)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.accentElderDark,
+                          side: const BorderSide(
+                              color: AppColors.accentElder)),
+                      onPressed: () => context.push('/scan'),
+                      icon: const Icon(Icons.medication_outlined),
+                      label: const Text('Quét thông tin thuốc'),
+                    ),
+                  ),
                 Expanded(
                   child: Stack(
                     alignment: Alignment.center,

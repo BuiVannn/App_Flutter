@@ -30,7 +30,7 @@ class ModeSelectScreen extends ConsumerWidget {
                   trailing: IconButton(
                     icon: const Icon(Icons.settings,
                         color: AppColors.textSecondary),
-                    onPressed: () {}, // Settings sẽ làm ở G5
+                    onPressed: () => context.push('/settings'),
                   ),
                 ),
                 const SizedBox(height: 24),

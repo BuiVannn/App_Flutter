@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:ptalk_core/ptalk_core.dart';
 import '../core/providers.dart';
+import '../settings/settings_providers.dart';
 import 'streaming_voice_client.dart';
 import 'voice_models.dart';
 
@@ -44,6 +45,15 @@ class VoiceController extends StateNotifier<VoiceUiState> {
     if (state.state == VoiceState.uploading ||
         state.state == VoiceState.playing) {
       return;
+    }
+    // Quota khách (20 lượt/ngày) — chỉ áp cho người chưa đăng nhập.
+    final loggedIn = await _ref.read(tokenStoreProvider).isLoggedIn();
+    if (!loggedIn) {
+      final store = await _ref.read(settingsStoreProvider.future);
+      if (!await store.incrementGuestRequest()) {
+        _toError('Đã dùng hết 20 lượt hôm nay. Quay lại vào ngày mai!');
+        return;
+      }
     }
     try {
       final client = await _ensureClient();
