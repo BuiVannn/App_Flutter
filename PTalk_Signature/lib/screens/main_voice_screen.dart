@@ -56,6 +56,12 @@ class MainVoiceScreen extends ConsumerWidget {
                         ),
                         const Spacer(),
                         IconButton(
+                          icon: const Icon(Icons.account_circle_outlined),
+                          color: AppColors.textOn(dark),
+                          tooltip: 'Tài khoản',
+                          onPressed: () => context.push('/account'),
+                        ),
+                        IconButton(
                           icon: const Icon(Icons.settings),
                           color: AppColors.textOn(dark),
                           tooltip: 'Cài đặt',

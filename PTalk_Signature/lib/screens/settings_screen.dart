@@ -52,35 +52,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
           children: [
           _section('TÀI KHOẢN', accent),
-          FutureBuilder<List<String?>>(
-            future: Future.wait([store.username, store.email]),
-            builder: (_, snap) {
-              final name = snap.data?[0];
-              final email = snap.data?[1];
-              final loggedIn = name != null;
-              return Card(
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: CircleAvatar(
-                          backgroundColor: accent,
-                          child: const Icon(Icons.person, color: Colors.white)),
-                      title: Text(loggedIn ? name : 'Khách'),
-                      subtitle: Text(loggedIn
-                          ? (email ?? '')
-                          : 'Bạn đang dùng thử · đăng nhập để lưu tiến trình'),
-                    ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.workspace_premium),
-                      title: const Text('Gói cước & hạn mức'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => context.push('/subscription'),
-                    ),
-                  ],
-                ),
-              );
-            },
+          Card(
+            child: ListTile(
+              leading: CircleAvatar(
+                  backgroundColor: accent,
+                  child: const Icon(Icons.person, color: Colors.white)),
+              title: const Text('Quản lý tài khoản'),
+              subtitle: const Text('Hồ sơ phụ huynh, các bé, gói cước'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => context.push('/account'),
+            ),
           ),
           const SizedBox(height: 16),
           _section('GIAO DIỆN', accent),
