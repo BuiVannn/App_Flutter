@@ -18,10 +18,15 @@ class StreamingVoiceClient {
     required this.onEvent,
     required this.onFirstAudio,
     required this.onError,
+    this.deviceIdOverride,
   });
 
   /// Email/định danh thiết bị gửi trong handshake.
   final String deviceId;
+
+  /// Nếu được cung cấp, thay thế [deviceId] trong handshake WS —
+  /// dùng để gắn username của bé active để AI cá nhân hoá đúng bé.
+  final String? deviceIdOverride;
   final void Function(StreamingEvent) onEvent;
   final void Function() onFirstAudio;
   final void Function(String) onError;
@@ -51,7 +56,7 @@ class StreamingVoiceClient {
         onError: (e) => onError('WS lỗi: $e'),
         onDone: () => _ready = false);
     _ch!.sink.add(jsonEncode(
-        {'device_id': deviceId, 'firmware_version': '2.0.0'}));
+        {'device_id': deviceIdOverride ?? deviceId, 'firmware_version': '2.0.0'}));
     _ready = true;
   }
 

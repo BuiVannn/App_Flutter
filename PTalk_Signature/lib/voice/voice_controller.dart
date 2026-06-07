@@ -32,8 +32,10 @@ class VoiceController extends StateNotifier<VoiceUiState> {
     final store = _ref.read(tokenStoreProvider);
     final deviceId =
         await store.email ?? await store.username ?? 'android_app';
+    final active = await ActiveChildStore().read();
     _client = StreamingVoiceClient(
       deviceId: deviceId,
+      deviceIdOverride: active?.username,
       onEvent: _onEvent,
       onFirstAudio: _onFirstAudio,
       onError: _onError,
