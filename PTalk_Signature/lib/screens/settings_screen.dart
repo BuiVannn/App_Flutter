@@ -233,6 +233,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
     if (ok == true) {
       await store.clear();
+      await ActiveChildStore().clear();
       if (mounted) context.go('/login');
     }
   }
