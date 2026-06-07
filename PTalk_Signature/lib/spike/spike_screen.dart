@@ -14,15 +14,21 @@ class _SpikeScreenState extends State<SpikeScreen> {
 
   void _log(String s) => setState(() => _logs.insert(0, s));
 
-  Future<void> _toggle() async {
-    if (_active) {
-      await _client?.stop();
-      setState(() => _active = false);
+  Future<void> _start({required bool loopback}) async {
+    if (_active) return;
+    _client = SpikeVoiceClient(onLog: _log);
+    setState(() => _active = true);
+    if (loopback) {
+      await _client!.startLoopback();
     } else {
-      _client = SpikeVoiceClient(onLog: _log);
-      setState(() => _active = true);
       await _client!.start();
     }
+  }
+
+  Future<void> _stop() async {
+    if (!_active) return;
+    await _client?.stop();
+    setState(() => _active = false);
   }
 
   @override
@@ -31,11 +37,34 @@ class _SpikeScreenState extends State<SpikeScreen> {
         body: Column(children: [
           Padding(
             padding: const EdgeInsets.all(16),
-            child: FilledButton.icon(
-              onPressed: _toggle,
-              icon: Icon(_active ? Icons.stop : Icons.mic),
-              label: Text(_active ? 'Dừng' : 'Bắt đầu nói'),
-            ),
+            child: Column(children: [
+              Row(children: [
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: _active ? null : () => _start(loopback: true),
+                    icon: const Icon(Icons.loop),
+                    label: const Text('Loopback (offline)'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton.icon(
+                    onPressed: _active ? null : () => _start(loopback: false),
+                    icon: const Icon(Icons.cloud),
+                    label: const Text('Server (WS)'),
+                  ),
+                ),
+              ]),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: _active ? _stop : null,
+                  icon: const Icon(Icons.stop),
+                  label: const Text('Dừng'),
+                ),
+              ),
+            ]),
           ),
           const Divider(),
           Expanded(

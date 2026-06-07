@@ -2,12 +2,22 @@
 
 > Điền bảng dưới sau khi chạy `flutter run` trên thiết bị thật (xem Task 9 trong plan).
 
-## Bảng đo
+## Bước 0 — Loopback offline (KHÔNG cần server)
 
-| Nền tảng | Thiết bị | Opus nạp được? | Thu mic (~50 frame/s)? | Round-trip audio đầu (ms) | Chất lượng (rõ/méo/đứt) | Ổn định ≥2 phút? |
-|---|---|---|---|---|---|---|
-| Android |  |  |  |  |  |  |
-| iOS |  |  |  |  |  |  |
+Bấm nút **"Loopback (offline)"**, nói vào mic → phải nghe lại giọng (đã qua Opus encode→decode).
+Đây là xác nhận quan trọng nhất cho iOS: mic + Opus + PCM playback hoạt động.
+
+| Nền tảng | Thiết bị | Opus nạp được? | Nghe lại được (loopback)? | Méo/đứt? | Crash? |
+|---|---|---|---|---|---|
+| iOS |  |  |  |  |  |
+| Android |  |  |  |  |  |
+
+## Bước 1 — Round-trip qua server (cần cùng mạng tới 171.226.10.121:8000)
+
+| Nền tảng | Thiết bị | WS connect OK? | Round-trip audio đầu (ms) | Chất lượng | Ổn định ≥2 phút? |
+|---|---|---|---|---|---|
+| Android |  |  |  |  |  |
+| iOS |  |  |  |  |  |
 
 ## Tiêu chí cổng quyết định
 

@@ -69,6 +69,26 @@ class SpikeVoiceClient {
     }
   }
 
+  /// Test offline KHÔNG cần server: mic → opus encode → opus decode → loa.
+  /// Xác minh 3 plugin native (mic, Opus, PCM playback) chạy được trên thiết bị
+  /// (đặc biệt iOS) mà không phụ thuộc mạng tới server.
+  Future<void> startLoopback() async {
+    if (!await _mic.ensurePermission()) {
+      onLog('❌ Không có quyền micro');
+      return;
+    }
+    await _transcoder.init();
+    await _player.init();
+    onLog('🔁 Loopback (offline) — nói vào mic, bạn sẽ nghe lại sau ~mã hoá Opus');
+    await _mic.start();
+    var frames = 0;
+    _micSub = _mic.frames.listen((pcmFrame) {
+      final opus = _transcoder.encode(pcmFrame);
+      _player.feed(_transcoder.decode(opus));
+      if (++frames % 50 == 0) onLog('… đã xử lý $frames frame (${frames * 20} ms)');
+    });
+  }
+
   Future<void> stop() async {
     await _micSub?.cancel();
     await _wsSub?.cancel();
