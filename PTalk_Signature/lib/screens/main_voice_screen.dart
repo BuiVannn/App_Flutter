@@ -165,21 +165,18 @@ class MainVoiceScreen extends ConsumerWidget {
       Color accent,
       Color accentDark) {
     final isPlaying = state == VoiceState.playing;
+    // Khi đang phát → nút X (tap để dừng). Còn lại → nút mic GIỮ-ĐỂ-NÓI.
     final mic = isPlaying
-        ? _circle(
+        ? _tapCircle(
             icon: Icons.close,
             color: AppColors.accentElder,
-            size: 72,
-            onTapDown: () {},
-            onTapUp: () => ctrl.cancelPlayback(),
+            onTap: () => ctrl.cancelPlayback(),
           )
-        : _circle(
-            icon: Icons.mic,
+        : _holdCircle(
             color: state == VoiceState.recording ? accentDark : accent,
-            size: 72,
             pulsing: state == VoiceState.recording,
-            onTapDown: () => ctrl.startTalking(),
-            onTapUp: () => ctrl.stopTalking(),
+            onHoldStart: ctrl.startTalking,
+            onHoldEnd: ctrl.stopTalking,
           );
 
     if (!elder) {
@@ -188,7 +185,10 @@ class MainVoiceScreen extends ConsumerWidget {
         children: [
           mic,
           const SizedBox(height: 10),
-          Text(ServerConfig.activeMode.statusIdleText,
+          Text(
+              isPlaying
+                  ? 'Chạm để dừng'
+                  : 'Giữ nút để nói · nhả ra để gửi',
               style: const TextStyle(
                   fontSize: 13, color: AppColors.textSecondary)),
         ],
@@ -199,22 +199,18 @@ class MainVoiceScreen extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _circle(
+        _tapCircle(
           icon: Icons.medication_outlined,
           color: AppColors.accentElder,
-          size: 72,
-          onTapDown: () {},
-          onTapUp: () => context.push('/scan'),
+          onTap: () => context.push('/scan'),
         ),
         const SizedBox(width: 28),
         mic,
         const SizedBox(width: 28),
-        _circle(
+        _tapCircle(
           icon: Icons.phone,
           color: const Color(0xFFD32F2F),
-          size: 72,
-          onTapDown: () {},
-          onTapUp: () => _callEmergency(ref),
+          onTap: () => _callEmergency(ref),
         ),
       ],
     );
@@ -226,35 +222,56 @@ class MainVoiceScreen extends ConsumerWidget {
     if (await canLaunchUrl(uri)) await launchUrl(uri);
   }
 
-  Widget _circle({
+  /// Nút bấm thường (tap) — dùng cho X / quét thuốc / gọi khẩn cấp.
+  Widget _tapCircle({
+    required IconData icon,
+    required Color color,
+    required VoidCallback onTap,
+  }) =>
+      GestureDetector(
+        onTap: onTap,
+        child: _circleVisual(icon: icon, color: color, size: 72),
+      );
+
+  /// Nút GIỮ-ĐỂ-NÓI — dùng Listener (pointer) cho chắc chắn, không bị
+  /// gesture tap huỷ khi tay hơi di chuyển. Nhấn xuống = bắt đầu, nhả = gửi.
+  Widget _holdCircle({
+    required Color color,
+    required bool pulsing,
+    required VoidCallback onHoldStart,
+    required VoidCallback onHoldEnd,
+  }) {
+    return Listener(
+      onPointerDown: (_) => onHoldStart(),
+      onPointerUp: (_) => onHoldEnd(),
+      onPointerCancel: (_) => onHoldEnd(),
+      child: _circleVisual(
+          icon: Icons.mic, color: color, size: 72, pulsing: pulsing),
+    );
+  }
+
+  Widget _circleVisual({
     required IconData icon,
     required Color color,
     required double size,
-    required VoidCallback onTapDown,
-    required VoidCallback onTapUp,
     bool pulsing = false,
   }) {
-    return GestureDetector(
-      onTapDown: (_) => onTapDown(),
-      onTapUp: (_) => onTapUp(),
-      onTapCancel: onTapUp,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        width: pulsing ? size + 8 : size,
-        height: pulsing ? size + 8 : size,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          boxShadow: [
-            BoxShadow(
-              color: color.withValues(alpha: 0.4),
-              blurRadius: pulsing ? 26 : 14,
-              spreadRadius: pulsing ? 4 : 0,
-            ),
-          ],
-        ),
-        child: Icon(icon, color: Colors.white, size: 34),
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      width: pulsing ? size + 8 : size,
+      height: pulsing ? size + 8 : size,
+      decoration: BoxDecoration(
+        color: color,
+        shape: BoxShape.circle,
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.4),
+            blurRadius: pulsing ? 26 : 14,
+            spreadRadius: pulsing ? 4 : 0,
+          ),
+        ],
       ),
+      child: Icon(icon, color: Colors.white, size: 34),
     );
   }
 }

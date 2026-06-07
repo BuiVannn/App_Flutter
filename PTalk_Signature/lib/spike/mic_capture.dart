@@ -20,7 +20,11 @@ class MicCapture {
     return status.isGranted;
   }
 
+  bool _recording = false;
+
   Future<void> start() async {
+    if (_recording) return;
+    _recording = true;
     final stream = await _recorder.startStream(const RecordConfig(
       encoder: AudioEncoder.pcm16bits,
       sampleRate: OpusAudioFormat.sampleRate,
@@ -41,8 +45,13 @@ class MicCapture {
   }
 
   Future<void> stop() async {
+    if (!_recording) return;
+    _recording = false;
     await _sub?.cancel();
-    await _recorder.stop();
+    _sub = null;
+    try {
+      await _recorder.stop();
+    } catch (_) {/* không sao nếu chưa kịp ghi */}
     _buffer.clear();
   }
 

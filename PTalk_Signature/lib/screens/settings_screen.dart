@@ -5,6 +5,7 @@ import 'package:ptalk_core/ptalk_core.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/providers.dart';
 import '../settings/settings_providers.dart';
+import '../widgets/gradient_background.dart';
 
 const _appVersion = '1.0.0 (Flutter)';
 
@@ -39,11 +40,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final themeMode = ref.watch(themeModeProvider);
     final store = ref.read(tokenStoreProvider);
 
-    return Scaffold(
-      appBar: AppBar(title: const Text('Cài đặt')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
+    return GradientBackground(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text('Cài đặt'),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: ListView(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+          children: [
           _section('TÀI KHOẢN', accent),
           FutureBuilder<List<String?>>(
             future: Future.wait([store.username, store.email]),
@@ -151,7 +158,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               );
             },
           ),
-        ],
+          ],
+        ),
       ),
     );
   }

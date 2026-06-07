@@ -37,6 +37,7 @@ class StreamingVoiceClient {
   bool _ready = false;
   bool _serverListening = false;
   bool _receivedFirstAudio = false;
+  bool _accepting = false; // có nhận & phát audio đến không (tắt khi huỷ/xong)
   final _outgoing = <Uint8List>[]; // opus frame đã pack, chờ LISTENING
 
   /// Khởi tạo codec/player + mở WS + handshake. Gọi 1 lần.
@@ -63,6 +64,7 @@ class StreamingVoiceClient {
     if (!_ready) await connect();
     _serverListening = false;
     _receivedFirstAudio = false;
+    _accepting = true;
     _outgoing.clear();
     // START_PCM_OUT: client gửi Opus lên, server gửi PCM thô về (khớp bản gốc,
     // tránh lỗi opus-decode). isPcmEncoding=false ⇒ "START_PCM_OUT".
@@ -87,17 +89,22 @@ class StreamingVoiceClient {
     if (_ready) _ch!.sink.add('END');
   }
 
-  /// Huỷ phát hiện tại (nút X) — dừng playback, reset.
-  Future<void> cancelPlayback() async {
-    await _player.release();
-    await _player.init();
+  /// Huỷ/dừng phát NGAY (nút X) — cắt audio, xả buffer, bỏ audio đến muộn.
+  Future<void> stopPlayback() async {
+    _accepting = false;
+    _receivedFirstAudio = false;
+    await _player.release(); // dừng + xoá buffer
+    await _player.init(); // sẵn sàng cho lần sau
   }
+
+  Future<void> cancelPlayback() => stopPlayback();
 
   void _onMessage(dynamic msg) {
     if (msg is String) {
       _onText(msg);
       return;
     }
+    if (!_accepting) return; // đã huỷ/kết thúc → bỏ audio đến muộn
     final bytes = msg is Uint8List
         ? msg
         : (msg is List<int> ? Uint8List.fromList(msg) : null);
@@ -125,6 +132,9 @@ class StreamingVoiceClient {
       }
       _outgoing.clear();
     }
+    // IDLE = server báo kết thúc phiên → ngừng nhận audio mới (buffer đã có sẽ
+    // tự phát hết). Tránh phát kéo dài sau khi model nói xong.
+    if (event is IdleEvent) _accepting = false;
     onEvent(event);
   }
 

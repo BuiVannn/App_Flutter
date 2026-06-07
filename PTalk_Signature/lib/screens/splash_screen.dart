@@ -60,7 +60,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
           child: Stack(
             children: [
               Align(
-                alignment: const Alignment(0, -0.12),
+                alignment: const Alignment(0, -0.04),
                 child: AnimatedBuilder(
                   animation: _c,
                   builder: (context, _) {

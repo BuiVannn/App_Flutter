@@ -40,11 +40,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
-            child: Column(
-              children: [
-                const GlassHeader(centerLabel: 'PTALK'),
+          child: LayoutBuilder(
+            builder: (context, c) => SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 12, 20, 24),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: c.maxHeight - 36),
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 460),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const GlassHeader(centerLabel: 'PTALK'),
                 const SizedBox(height: 32),
                 // Hero mascot trong halo
                 Container(
@@ -84,7 +91,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 11, color: AppColors.textMuted),
                 ),
-              ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
             ),
           ),
         ),

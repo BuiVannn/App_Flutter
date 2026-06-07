@@ -42,9 +42,14 @@ class VoiceController extends StateNotifier<VoiceUiState> {
     return _client!;
   }
 
-  /// Bắt đầu nói (nhấn giữ nút mic).
+  bool _starting = false; // đang trong quá trình bắt đầu (async)
+  bool _pendingStop = false; // người dùng đã nhả tay trước khi start xong
+
+  /// Bắt đầu nói (NHẤN GIỮ nút mic — giữ trong lúc nói).
   Future<void> startTalking() async {
-    if (state.state == VoiceState.uploading ||
+    if (_starting ||
+        state.state == VoiceState.recording ||
+        state.state == VoiceState.uploading ||
         state.state == VoiceState.playing) {
       return;
     }
@@ -57,6 +62,8 @@ class VoiceController extends StateNotifier<VoiceUiState> {
         return;
       }
     }
+    _starting = true;
+    _pendingStop = false;
     try {
       final client = await _ensureClient();
       state = const VoiceUiState(VoiceState.recording, 'Đang nghe...');
@@ -73,11 +80,22 @@ class VoiceController extends StateNotifier<VoiceUiState> {
       });
     } catch (e) {
       _toError('Lỗi kết nối: $e');
+    } finally {
+      _starting = false;
+      // Nếu người dùng đã nhả tay trong lúc đang start → dừng ngay bây giờ.
+      if (_pendingStop) {
+        _pendingStop = false;
+        await stopTalking();
+      }
     }
   }
 
-  /// Nhả tay → gửi END, chờ xử lý.
+  /// Nhả tay → gửi END, chờ xử lý. (Bấm nhả quá nhanh: đợi start xong rồi dừng.)
   Future<void> stopTalking() async {
+    if (_starting) {
+      _pendingStop = true; // hoãn: startTalking sẽ gọi lại stopTalking khi xong
+      return;
+    }
     if (state.state != VoiceState.recording) return;
     _startAck?.cancel();
     await _client?.stopTalking();
