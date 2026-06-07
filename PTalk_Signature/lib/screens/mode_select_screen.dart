@@ -187,7 +187,7 @@ class _ModeCard extends StatelessWidget {
                   height: 96,
                   decoration: BoxDecoration(color: halo, shape: BoxShape.circle),
                   padding: const EdgeInsets.all(14),
-                  child: Image.asset(icon),
+                  child: Image.asset(icon, cacheWidth: 240),
                 ),
               ),
               const SizedBox(height: 12),

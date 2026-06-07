@@ -55,7 +55,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     shape: BoxShape.circle,
                   ),
                   padding: const EdgeInsets.all(18),
-                  child: Image.asset('assets/images/char_idle.png'),
+                  child: Image.asset('assets/images/char_idle.png',
+                      cacheWidth: 500),
                 ),
                 const SizedBox(height: 24),
                 const Text(

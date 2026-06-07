@@ -65,7 +65,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                     ],
                   ),
                   padding: const EdgeInsets.all(24),
-                  child: Image.asset('assets/images/logo_ptalk_signature.png'),
+                  child: Image.asset('assets/images/logo_ptalk_signature.png',
+                      cacheWidth: 600),
                 ),
                 const SizedBox(height: 24),
                 const Text(
