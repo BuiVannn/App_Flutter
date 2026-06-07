@@ -64,7 +64,9 @@ class StreamingVoiceClient {
     _serverListening = false;
     _receivedFirstAudio = false;
     _outgoing.clear();
-    _ch!.sink.add('START');
+    // START_PCM_OUT: client gửi Opus lên, server gửi PCM thô về (khớp bản gốc,
+    // tránh lỗi opus-decode). isPcmEncoding=false ⇒ "START_PCM_OUT".
+    _ch!.sink.add('START_PCM_OUT');
     await _mic.start();
     _micSub = _mic.frames.listen((pcmFrame) {
       final packed = AudioFrameProtocol.packFrame(_transcoder.encode(pcmFrame));
@@ -105,8 +107,9 @@ class StreamingVoiceClient {
       onFirstAudio();
     }
     try {
-      for (final opus in AudioFrameProtocol.unpackFrames(bytes)) {
-        _player.feed(_transcoder.decode(opus));
+      // START_PCM_OUT: mỗi khung đã là PCM16 thô — phát thẳng, KHÔNG opus-decode.
+      for (final pcm in AudioFrameProtocol.unpackFrames(bytes)) {
+        _player.feed(pcm);
       }
     } on ProtocolException catch (e) {
       onError('Giải mã audio lỗi: $e');

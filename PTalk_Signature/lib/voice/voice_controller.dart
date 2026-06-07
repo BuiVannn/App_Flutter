@@ -29,9 +29,11 @@ class VoiceController extends StateNotifier<VoiceUiState> {
 
   Future<StreamingVoiceClient> _ensureClient() async {
     if (_client != null) return _client!;
-    final email = await _ref.read(tokenStoreProvider).email ?? 'guest';
+    final store = _ref.read(tokenStoreProvider);
+    final deviceId =
+        await store.email ?? await store.username ?? 'android_app';
     _client = StreamingVoiceClient(
-      deviceId: email,
+      deviceId: deviceId,
       onEvent: _onEvent,
       onFirstAudio: _onFirstAudio,
       onError: _onError,
