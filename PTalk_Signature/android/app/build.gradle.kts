@@ -23,6 +23,9 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // flutter_appauth: scheme của redirect URI (app://kidmentor/callback)
+        manifestPlaceholders["appAuthRedirectScheme"] = "app"
     }
 
     buildTypes {

@@ -26,6 +26,12 @@ Bấm nút **"Loopback (offline)"**, nói vào mic → phải nghe lại giọng
 - [ ] Âm thanh rõ, không đứt/méo ở cả Android lẫn iOS.
 - [ ] Không crash sau ≥2 phút nói liên tục.
 
+## Kết quả thực tế (2026-06-07)
+
+- iOS thiết bị thật: **Loopback ĐẠT** — nghe lại được, không nhiễu nhiều. Lặp Bật/Dừng nhiều lần OK sau fix (guard `initOpus` + dispose mic).
+- Nhược điểm nhỏ: âm lượng hơi bé + vang kiểu mic gần loa (đặc thù loopback, không phải lỗi đường truyền). Sẽ không xuất hiện ở chế độ Server thật; có thể chỉnh gain sau.
+- → **Pipeline audio thuần Flutter ĐẠT**, tiếp tục G2–G6 không cần platform channel.
+
 ## Quyết định
 
 - [ ] **ĐẠT** → viết plan G2–G6, dùng pipeline audio thuần Flutter ở đây.
