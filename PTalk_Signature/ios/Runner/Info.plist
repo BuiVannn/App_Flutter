@@ -4,6 +4,21 @@
 <dict>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Ứng dụng cần micro để trò chuyện bằng giọng nói.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsArbitraryLoads</key>
+		<true/>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>171.226.10.121</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSIncludesSubdomains</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Ứng dụng cần camera để quét thông tin thuốc.</string>
 	<key>CFBundleURLTypes</key>
