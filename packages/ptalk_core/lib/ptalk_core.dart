@@ -10,3 +10,4 @@ export 'src/net/api_config.dart';
 export 'src/net/dashboard_client.dart';
 export 'src/data/models.dart';
 export 'src/data/profile_repository.dart';
+export 'src/state/active_child_store.dart';
